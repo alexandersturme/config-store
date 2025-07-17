@@ -4,13 +4,13 @@ services:
       context: .
       target: development
     ports:
-      - "3000:80"
+      - 3000:3000
     environment:
-      - PORT=80
+      - PORT=3000
     develop:
       watch:
-        - path: src
-          action: sync
+        - action: sync
+          path: ./src
           target: /app/src
     networks:
       - config-store-network

@@ -1,17 +1,20 @@
-FROM node:22 AS development
+FROM node:22-alpine AS development
+
 WORKDIR /app
 COPY package*.json .
 RUN npm ci
-COPY src/ ./src
+COPY src src
 CMD ["npm", "run", "dev"]
 
-FROM node:22 AS production-dependencies
+FROM node:22-alpine AS prod-dependencies
+
 WORKDIR /app
 COPY package*.json .
 RUN npm ci --only=production
 
-FROM grc.io/distroless/node:22 AS production
+FROM gcr.io/distroless/nodejs22 AS production
+
 WORKDIR /app
-COPY --from=production-dependencies /app/node_modules ./node_modules
-COPY src/ ./src
+COPY --from=prod-dependencies /app/node_modules node_modules
+COPY src src
 CMD ["src/index.js"]
